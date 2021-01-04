@@ -59,6 +59,28 @@ class _SearchScholarIterator(object):
         self._soup = self._nav._get_soup(url)
         self._pos = 0
         self._rows = self._soup.find_all('div', class_='gs_r gs_or gs_scl')
+        self._total_results = self._get_total_results()
+
+    def _get_total_results(self):
+        """
+        Result reports are of the form
+          About 89 results (0.05 sec)
+          1 result (0.03 sec)
+
+        Using 'gs_ab_mdw' class marker, which apparently applies to two divs in the page.
+        """
+        divs = self._soup.find_all('div', class_='gs_ab_mdw')
+        for div in divs:
+            match = re.search(r'\s*([0-9’]+)\s+results?', str(div))
+            if not match:
+                continue
+
+            results = int(match.group(1).replace('’', ''))
+            return results
+
+        return None
+
+
 
     def _get_total_results(self):
         for x in self._soup.find_all('div', class_='gs_ab_mdw'):
