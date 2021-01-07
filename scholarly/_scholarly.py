@@ -16,6 +16,7 @@ _AUTHSEARCH = '/citations?hl=en&view_op=search_authors&mauthors={0}'
 _KEYWORDSEARCH = '/citations?hl=en&view_op=search_authors&mauthors=label:{0}'
 _KEYWORDSEARCHBASE = '/citations?hl=en&view_op=search_authors&mauthors={}'
 _PUBSEARCH = '/scholar?hl=en&q={0}'
+_CITESEARCH = '/scholar?hl=en&cites={0}'
 
 
 class _Scholarly:
@@ -146,6 +147,20 @@ class _Scholarly:
             
         # improve str below
         url = url + yr_lo + yr_hi + citations + patents + sortby + start
+        return self.__nav.search_publications(url)
+
+    def search_citations(self,
+                    cites: int, patents: bool = True,
+                    citations: bool = True, year_low: int = None,
+                    year_high: int = None):
+        url = _CITESEARCH.format(str(cites))
+
+        yr_lo = '&as_ylo={0}'.format(year_low) if year_low is not None else ''
+        yr_hi = '&as_yhi={0}'.format(year_high) if year_high is not None else ''
+        citations = '&as_vis={0}'.format(1 - int(citations))
+        patents = '&as_sdt={0},33'.format(1 - int(patents))
+        # improve str below
+        url = url + yr_lo + yr_hi + citations + patents
         return self.__nav.search_publications(url)
 
     def search_single_pub(self, pub_title: str, filled: bool = False)->PublicationParser:
