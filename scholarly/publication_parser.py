@@ -80,14 +80,12 @@ class _SearchScholarIterator(object):
 
         return None
 
-
-
     def _get_total_results(self):
         for x in self._soup.find_all('div', class_='gs_ab_mdw'):
             # Decimal separator is set by Google independent of language setting
-            match = re.match(pattern=r'(^|\s*About)\s*([0-9,\.]+)', string=x.text)
+            match = re.match(pattern=r'(^|\s*About)\s+([0-9,\.’]+)', string=x.text)
             if match:
-                return int(re.sub(pattern=r'[,\.]',repl='', string=match.group(2)))
+                return int(re.sub(pattern=r'[,\.’]',repl='', string=match.group(2)))
         return None
 
     # Iterator protocol
